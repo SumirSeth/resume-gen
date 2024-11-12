@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Github,
   Mail,
@@ -15,6 +15,7 @@ import { ResumeData } from "./types";
 import ShareButton from "./components/ShareButton";
 import { saveToCache, getFromCache } from "./utils/cache";
 import { generateShareableLink, getDataFromShare } from "./utils/share";
+import SaveAsPdfButton from "./components/SaveAsPdfButton";
 
 function App() {
   const [resumeData, setResumeData] = useState<ResumeData | null>(() => {
@@ -27,6 +28,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showProjectSelector, setShowProjectSelector] = useState(false);
   const [allProjects, setAllProjects] = useState<any[]>([]);
+  const resumeRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (data: ResumeData) => {
     setLoading(true);
@@ -101,7 +103,10 @@ function App() {
               </h1>
             </div>
             {resumeData && !showProjectSelector && (
-              <ShareButton url={shareableUrl} />
+              <div className="flex gap-2">
+                <SaveAsPdfButton targetRef={resumeRef} />
+                <ShareButton url={shareableUrl} />
+              </div>
             )}
           </div>
         </div>
@@ -138,7 +143,7 @@ function App() {
             >
               Create New Resume
             </button>
-            <Resume data={resumeData} />
+            <Resume ref={resumeRef} data={resumeData} />
           </div>
         ) : (
           <ResumeForm onSubmit={handleSubmit} />
